@@ -2,7 +2,7 @@
   "suluPackage": true,
   "name": "sulu-file-system-view",
   "version": "1.0.2",
-  "description": "Sulu file system view module",
+  "description": "SULU fileSystemView module",
   "main": "index.js",
   "directories": {
     "example": "examples"
