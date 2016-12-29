@@ -5,7 +5,7 @@
   "description": "Sulu file system view module",
   "main": "index.js",
   "directories": {
-    "example": "examples",
+    "example": "examples"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
