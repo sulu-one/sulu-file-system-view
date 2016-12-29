@@ -1,0 +1,24 @@
+{
+  "suluPackage": true,
+  "name": "sulu-file-system-view",
+  "version": "1.0.0",
+  "description": "Sulu file system view module",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "bump": "npm version patch && git push && git push --tags && npm publish"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sulu-one/sulu-file-system-view.git"
+  },
+  "author": "s-a",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sulu-one/sulu-file-system-view/issues"
+  },
+  "homepage": "https://github.com/sulu-one/sulu-file-system-view#readme"
+}
