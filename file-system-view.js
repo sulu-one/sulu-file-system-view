@@ -1,14 +1,14 @@
 var fs = require("fs");
 var path = require("path");
 var drivelist = require("drivelist");
-	
+
 var View = function(id) {
 	this.id = id;
 	this.activeRow = null;
 	var cfg = {
 		path : process.cwd()
 	}
-	
+
 	if (applicationController.config.settings.fileSystemViews && applicationController.config.settings.fileSystemViews[id]){
 		cfg.path = applicationController.config.settings.fileSystemViews[id].path;
 	}
@@ -22,18 +22,18 @@ var View = function(id) {
 
 
 /* Gets or sets active row */
-View.prototype.row = function($row) { 
+View.prototype.row = function($row) {
 	if ($row && $row.get(0)){
 		var activeRows = this.el.querySelector(".active");
 		if (activeRows){
 			for(var i = 0; i< activeRows.length; i++){
 				activeRows[i].classList.remove("active");
 			}
-			if (activeRows.classList){ 
+			if (activeRows.classList){
 				activeRows.classList.remove("active");
 			}
 		}
-		
+
 		this.activeRow = $row;
 		this.activeRow.addClass("active");
 	}
@@ -99,11 +99,11 @@ View.prototype.selected = function() {
 View.prototype.dblclick = function(/*e*/) {
 	var fileSystemItemDataRow = $(this);
 	var id = parseInt(fileSystemItemDataRow.data("rowid"), 10);
-	var filename = fileSystemItemDataRow.data("filename"); 
+	var filename = fileSystemItemDataRow.data("filename");
 	var view = $(this).parents("element-core-data-view").data("controller");
 	var rowData = view.data[id];
-	window.applicationController.events.emit("enter-filesystem-item", rowData);  
-	if (!rowData.preventDefault && (rowData.isDirectory || rowData.isDisk)){ 
+	window.applicationController.events.emit("enter-filesystem-item", rowData);
+	if (!rowData.preventDefault && (rowData.isDirectory || rowData.isDisk)){
 		view.cd(filename);
 	}
 
@@ -130,7 +130,7 @@ View.prototype.selectActiveRow = function() {
 
 View.prototype.selectByFileExtension = function() {
 	this.unselectAllRows();
-	var ext = this.activeRowData().ext; 
+	var ext = this.activeRowData().ext;
 	for (var i = 0; i < this.data.length; i++) {
 		var row = this.data[i];
 		if (ext === row.ext && row.name !== ".."){
@@ -140,7 +140,7 @@ View.prototype.selectByFileExtension = function() {
 	this.el.set("selectedFileCount", this.selected().length);
 };
 
-View.prototype.invertSelection = function() { 
+View.prototype.invertSelection = function() {
 	for (var i = 0; i < this.data.length; i++) {
 		var row = this.data[i];
 		if (row.name !== ".."){
@@ -150,7 +150,7 @@ View.prototype.invertSelection = function() {
 	this.el.set("selectedFileCount", this.selected().length);
 };
 
-View.prototype.selectAll = function() { 
+View.prototype.selectAll = function() {
 	for (var i = 0; i < this.data.length; i++) {
 		var row = this.data[i];
 		if (row.name !== ".."){
@@ -160,7 +160,7 @@ View.prototype.selectAll = function() {
 	this.el.set("selectedFileCount", this.data.length);
 };
 
-View.prototype.unselectAllRows = function() { 
+View.prototype.unselectAllRows = function() {
 	for (var i = 0; i < this.data.length; i++) {
 		var row = this.data[i];
 		row.selected = false;
@@ -200,30 +200,31 @@ function formatDate(date) {
 }
 
 View.prototype.renderRow = function(fileSystemItem, showFullPath) {
-	var file = fileSystemItem; 
+	var file = fileSystemItem;
 
 	if (fileSystemItem.visible === undefined || fileSystemItem.visible === true){
 		var row = [];
-		
+
 		var bookmarks = applicationController.config.settings.bookmarks;
 
 		var filename = path.join(file.path, (file.name || "")) + (file.ext || "");
 		if (file.name === "" || file.name === "..") {
 			filename = file.path;
 		}
-			
+
 		row.push('<div style="position:relative" data-rowid="' + file.rowId + '" class="horizontal layout row filesystemitem' + (file.isDisk ? " filesystemitem-disk" : "") + (file.isDirectory ? " filesystemitem-directory" : "") + (file.selected ? " selected" : "") + '" data-isdirectory="' + file.isDirectory + '" data-filename="' + filename + '">');
 			row.push('<div class="flex-1">');
 			file.bookmarked = (bookmarks.indexOf(path.join(file.path, (file.name || "")) + (file.ext || "")) !== -1);
-			if (file.bookmarked) { 
-				row.push('<span class="' + (file.bookmarkClass || "fa fa-bookmark glow") + '"></span> '); 
+			if (file.bookmarked) {
+				row.push('<span class="' + (file.bookmarkClass || "fa fa-bookmark glow") + '"></span> ');
 			}
 			row.push('<span class="' + file.icon + '"></span></div>');
 			var fn = file.name || filename ;
 			if (showFullPath){
 				fn = path.join(file.path, (file.name || ""));
 			}
-			 
+
+			fn += " " + (file.symbolicLinkTarget ? "<span class=\"symlink-target\"><i class=\"fa fa-long-arrow-right\" aria-hidden=\"true\"></i> <small>" + file.symbolicLinkTarget + "</small></span>" : "");
 			var dt = new Date(file.stats.date);
 			// var dt = (file.stats.date || "").toString().replace("T", " ").replace(".000Z", "");
 			if (file.stats.date !== ""){
@@ -293,21 +294,21 @@ View.prototype.updateGridViewData = function(isHistoryJump, showFullPath){
 	self.cluster.update(self.renderRows(self.data, showFullPath));
 	self.el.set("path", self.path.split(self.sep));
 	self.el.set("xpath", []);
-	for(var i = 0; i < self.el.get("path").length; i++){ 
+	for(var i = 0; i < self.el.get("path").length; i++){
 		if (self.el.get("path")[i] !== "") {
 			self.el.push("xpath", {
 				folder : self.el.get("path")[i],
-				path : self.el.get("path").slice(0, i + 1).join(self.sep) 
+				path : self.el.get("path").slice(0, i + 1).join(self.sep)
 			});
 		}
-	} 
+	}
 	if (isHistoryJump === undefined){
 		self.history.push(self.el.get("path").join(self.sep));
-	} 
+	}
 	self.setFirstRowActive();
 	var v = window.applicationController.GUI.activeView();
 	if (v){
-		window.document.title = v.model.path + " - SULU"; 
+		window.document.title = v.model.path + " - SULU";
 	}
 	self.el.set("selectedFileCount", self.selected().length);
 }
@@ -342,34 +343,34 @@ View.prototype.recoverViewState = function(selectedFiles){
 };
 
 View.prototype.refresh = function(newActiveItemName, showFullPath){
-	var selectedFiles = this.selected(); 
+	var selectedFiles = this.selected();
 	var activeRow = this.activeRowData();
 	var oldActiveRowId;
 	if (this.activeRow){
 		oldActiveRowId = this.activeRow.data("rowid");
-	} 
+	}
 
 	var oldItemName = newActiveItemName;
 	if (activeRow) {
 		oldItemName = oldItemName || (path.join(activeRow.path, activeRow.name) + activeRow.ext);
 	}
-	var self = this; 
-	this.cd(this.path, true, function () { 
+	var self = this;
+	this.cd(this.path, true, function () {
 		self.recoverViewState(selectedFiles);
 		self.updateGridViewData(true, showFullPath);
 		if (!self.setActiveRowByFileName(oldItemName)){
 			if (!self.setActiveRowByRowId(oldActiveRowId)){
 				self.setActiveRowByRowId(1);
 			};
-		}; 
+		};
 	});
 };
 
 
-View.prototype.refreshVirtual = function(virtualFileList, showFullPath, done){ 
-	var self = this; 
+View.prototype.refreshVirtual = function(virtualFileList, showFullPath, done){
+	var self = this;
 	self.extendPathContentMetaData(virtualFileList, function(){
-		self.updateGridViewData(true, showFullPath);  
+		self.updateGridViewData(true, showFullPath);
 		self.setFirstRowActive(true);
 		if (done){
 			done();
@@ -387,8 +388,8 @@ View.prototype.cd = function(dir, isHistoryJump, done){
 	}
 	var self = this;
 	self.activeRow = null;
-	self.activeRowId = null; 
- 
+	self.activeRowId = null;
+
 	if (dir == "" || (!path.isAbsolute(dir) && dir === ".." && path.join(this.path, "..") === this.path)){
 		// root of disc
 		drivelist.list(function(error, disks) {
@@ -398,15 +399,15 @@ View.prototype.cd = function(dir, isHistoryJump, done){
 			for (var i = 0; i < disks.length; i++) {
 				var disk = disks[i];
 				 	self.data.push({
-				 	isDisk: true, 
-					icon: "fa fa-hdd-o", path: disk.mountpoint + self.sep, 
+				 	isDisk: true,
+					icon: "fa fa-hdd-o", path: disk.mountpoint + self.sep,
 					stats:{size: bytesToSize(disk.size)}/*, ext: disk.description*/}
-				); 
+				);
 			}
 			self.updateGridViewData(isHistoryJump);
 			if (done) done();
 		});
-	} else { 
+	} else {
 		if (path.isAbsolute(dir)){
 			this.path = dir;
 		} else {
@@ -423,26 +424,26 @@ View.prototype.cd = function(dir, isHistoryJump, done){
 
 View.prototype.setActiveRowByRowId = function(rowid) {
 	var self = this;
-	self.activeRowId = 0; 
-	var $scrollArea = $("#scrollArea" + self.id); 
+	self.activeRowId = 0;
+	var $scrollArea = $("#scrollArea" + self.id);
 	self.activeRow = $scrollArea.find('.filesystemitem[data-rowid="' + rowid + '"]');
 	self.row(self.activeRow);
-	return (self.activeRow.length !== 0) 
+	return (self.activeRow.length !== 0)
 };
 
 View.prototype.setActiveRowByFileName = function(filename) {
 	var self = this;
-	self.activeRowId = 0; 
-	var $scrollArea = $("#scrollArea" + self.id); 
+	self.activeRowId = 0;
+	var $scrollArea = $("#scrollArea" + self.id);
 	self.activeRow = $scrollArea.find('.filesystemitem[data-filename="' + (filename || "").replace(/\\/g, "\\\\") + '"]')
 	self.row(self.activeRow);
-	return (self.activeRow.length !== 0) 
+	return (self.activeRow.length !== 0)
 };
 
 
 View.prototype.setFirstRowActive = function(force) {
 	var self = this;
-	self.activeRowId = 0; 
+	self.activeRowId = 0;
 	var $scrollArea = $("#scrollArea" + self.id);
 	if (!self.activeRow || force){
 		self.activeRow = $scrollArea.find(".filesystemitem:first");
@@ -457,7 +458,7 @@ View.prototype.mimeIconType = function(fileSystemItem) {
 	} else {
 		result = "fa fa-file-o";
 	}
-	window.applicationController.events.emit("init-filesystem-item-icon", fileSystemItem); 
+	window.applicationController.events.emit("init-filesystem-item-icon", fileSystemItem);
 	result = fileSystemItem.icon;
 
 	return result;
@@ -477,7 +478,7 @@ View.prototype.extendPathContentMetaData = function(directoryContent, done) {
 		ext: "",
 		isDirectory: true,
 		idDisk: false
-	}); 
+	});
 
 	for (var i = 0; i < directoryContent.length; i++) {
 		var filename = directoryContent[i];
@@ -488,29 +489,32 @@ View.prototype.extendPathContentMetaData = function(directoryContent, done) {
 
 
 		var symlink = null;
-		try { 
+		var symbolicLinkTarget = null;
+		try {
 			if (path.isAbsolute(filename)){
 				stats = fs.statSync(filename);
 				folder = path.dirname(filename);
 				symlink = fs.readlinkSync(filename);
+				symbolicLinkTarget = symlink;
 			} else {
 				stats = fs.statSync(path.join(self.path, filename));
 				symlink = fs.readlinkSync(path.join(self.path, filename));
+				symbolicLinkTarget = symlink;
 			}
 		} catch(e){
-			if (!stats.isFile){	
+			if (!stats.isFile){
 				stats.isFile = function() {
 					return true;
 				};
 			}
-			if (!stats.isSymbolicLink){			
+			if (!stats.isSymbolicLink){
 				stats.isSymbolicLink = function() {
 					return false;
 				};
-			} 
+			}
 		}
 
-		var extension = path.extname(filename); 
+		var extension = path.extname(filename);
 		var fileSystemItem = {
 			//icon: "fa fa-file-o",
 			path: folder,
@@ -519,6 +523,7 @@ View.prototype.extendPathContentMetaData = function(directoryContent, done) {
 			ext: extension,
 			isDirectory: !stats.isFile(),
 			isSymbolicLink : (symlink !== null),
+			symbolicLinkTarget : symbolicLinkTarget,
 			isdisk: false
 		};
 
@@ -537,7 +542,7 @@ View.prototype.extendPathContentMetaData = function(directoryContent, done) {
 };
 
 View.prototype.dir = function(done) {
-	var self = this; 
+	var self = this;
 	var path = self.path;
 
 	try{
@@ -547,22 +552,22 @@ View.prototype.dir = function(done) {
 
 	fs.readdir(path, function  (err, directoryContent) {
 		if (err){
-			window.applicationController.error(err); 
-		} else { 
+			window.applicationController.error(err);
+		} else {
 			self.extendPathContentMetaData(directoryContent, done);
 		}
 	});
 };
 
 
-View.prototype.pathLinkClick = function(e, detail) { 
-	var p = e.target.parentElement.dataset.path || ""; 
+View.prototype.pathLinkClick = function(e, detail) {
+	var p = e.target.parentElement.dataset.path || "";
 	if (p !== ""){
 		p += this.sep;
-	} 
+	}
 	this.cd(p);
-	e.preventDefault(); 
+	e.preventDefault();
 	return false;
-}; 
+};
 
 module.exports = View;
