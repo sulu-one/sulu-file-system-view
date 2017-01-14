@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/sulu-one/sulu-file-system-view/issues"
   },
-  "homepage": "https://github.com/sulu-one/sulu-file-system-view#readme"
+  "homepage": "https://github.com/sulu-one/sulu-file-system-view#readme",
+  "dependencies": {
+    "drivelist": "^5.0.4",
+    "jquery": "^3.1.1"
+  }
 }
