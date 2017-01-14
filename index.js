@@ -57,7 +57,8 @@ Command.prototype.historyJumpForward = function historyJumpForward() {
 };
 
 var Plugin = function  (client) {
-	window.FileSystemView = require(path.join(__dirname, "file-system-view.js"));
+	 
+	window.FileSystemView = require("sulu-file-system-view/file-system-view");
 	window.$ = require("jquery");
 
 	client.app.loadHTML(path.join(__dirname, "element-data-view.html")); 
