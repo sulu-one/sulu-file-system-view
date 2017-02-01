@@ -1,5 +1,20 @@
 {
-  "suluPackage": true,
+  "suluPackage": {
+    "hotkeys" : [
+      {
+        "key" : "ctrl+alt+left" , 
+        "function" : "historyJumpBackward"
+      },      
+      {
+        "key" : "ctrl+alt+right" , 
+        "function" : "historyJumpForward"
+      },      
+      {
+        "key" : "right" , 
+        "function" : "changeDirectory"
+      } 
+    ]
+  },
   "name": "sulu-file-system-view",
   "version": "1.0.6",
   "description": "SULU fileSystemView module",

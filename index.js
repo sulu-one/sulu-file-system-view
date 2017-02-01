@@ -57,17 +57,10 @@ Command.prototype.historyJumpForward = function historyJumpForward() {
 };
 
 var Plugin = function  (client) {
-	 
 	window.FileSystemView = require("sulu-file-system-view/file-system-view");
-	window.$ = require("jquery");
-
-	client.app.loadHTML(path.join(__dirname, "element-data-view.html")); 
-
-	this.command = new Command();
-	// file properties - client.app.registerHotKey("alt+enter", this.command.historyJumpBackward);
-	client.app.registerHotKey("ctrl+alt+left", this.command.historyJumpBackward);
-	client.app.registerHotKey("ctrl+alt+right", this.command.historyJumpForward); 
-	client.app.registerHotKey("right", this.command.changeDirectory); 
+	window.$ = require("jquery"); 
+	client.app.loadHTML(path.join(__dirname, "element-data-view.html"));  
+	this.command = new Command(); 
 };
 
 module.exports = Plugin;
